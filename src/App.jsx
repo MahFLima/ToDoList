@@ -1,16 +1,46 @@
 import { HeaderLogo } from "./components/HeaderLogo";
-import { Card } from "./components/Card";
 import { ContentDefault } from "./components/ContentDefault";
 import { useEffect, useState } from "react";
-import { PlusCircle } from "@phosphor-icons/react";
+import { PlusCircle, Trash } from "@phosphor-icons/react";
 
 function App() {
-  const [tasks, setTasks] = useState(["teste", "teste"])
-  const [taskInput, setTaskInput] = useState("")
-  const [isCheckedTask, setIsCheckedTask] = useState("")
+  const [tasks, setTasks] = useState("");
+  const [taskInput, setTaskInput] = useState("");
+  const [checkedStateValue, setCheckedStateValue] = useState(0);
 
-  useEffect(() => {
+  const [checkedState, setCheckedState] = useState(
+    new Array(tasks.length).fill(false)
+  );
 
+  const handleOnChange = (position) => {
+    const updatedCheckedState = checkedState.map((item, index) =>
+      index === position ? !item : item
+    );
+
+    setCheckedState(updatedCheckedState);
+
+    const total = updatedCheckedState.reduce((sum, currentState) => {
+      if (currentState === true) {
+        return sum + 1;
+      }
+      return sum;
+    }, 0);
+
+    setCheckedStateValue(total);
+  };
+
+  function addTask(){
+    setTasks(prevTask => [...prevTask, taskInput])
+  }
+
+  function deleteTask(position){
+    const taskUpdate = tasks.filter((item, index) => index != position)
+
+    setTasks(taskUpdate)
+  }
+
+  useEffect(()=>{
+    
   },[])
 
   return (
@@ -25,9 +55,7 @@ function App() {
             setTaskInput(e.target?.value);
           }}
         />
-        <button
-          className="text-gray-100 font-bold text-sm flex gap-2 justify-center items-center bg-blue-900 rounded-lg w-24 hover:bg-blue-500"
-        >
+        <button onClick={() => addTask()} className="text-gray-100 font-bold text-sm flex gap-2 justify-center items-center bg-blue-900 rounded-lg w-24 hover:bg-blue-500">
           Criar
           <PlusCircle size={16} />
         </button>
@@ -43,13 +71,39 @@ function App() {
             </div>
             <div className="flex items-center gap-2 font-bold">
               <p className="text-sm text-purple-500 block">Concluídas</p>
-              <p className="text-xs px-4 py-2 bg-gray-400 rounded-full">0</p>
+              <p className="text-xs px-4 py-2 bg-gray-400 rounded-full">
+                {checkedStateValue}
+              </p>
             </div>
           </header>
           <div className="mt-6 w-full flex flex-col gap-2">
             {tasks ? (
               tasks.map((item, index) => {
-                return <Card key={index} name={item} check={`task${index}`}/>;
+                return (
+                  <div
+                    key={index}
+                    className="w-full flex gap-4 justify-between items-center bg-gray-500 p-4 rounded-lg"
+                  >
+                    <div className="flex gap-4 items-center">
+                      <div className="checkbox-wrapper-39">
+                        <label>
+                          <input type="checkbox" id={`checkbox-${index}`} checked={checkedState[index]} onChange={() => handleOnChange(index)}/>
+                          <span className="checkbox" htmlFor={`checkbox-${index}`}></span>
+                        </label>
+                      </div>
+                      <label
+                        htmlFor={`checkbox-${index}`}
+                        className="text-gray-100"
+                      >
+                        {item}
+                      </label>
+                    </div>
+
+                    <button onClick={() => deleteTask(index)}>
+                      <Trash size={20} className="text-gray-300" />
+                    </button>
+                  </div>
+                );
               })
             ) : (
               <ContentDefault />
