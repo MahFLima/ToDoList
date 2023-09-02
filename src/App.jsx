@@ -85,13 +85,14 @@ function App() {
                     key={index}
                     className="w-full flex gap-4 justify-between items-center bg-gray-500 p-4 rounded-lg"
                   >
-                    <div className="flex gap-4 items-center">
-                      <div className="checkbox-wrapper-39">
+                    <div className="flex gap-4 items-center form-group">
+                      {/* <div className="checkbox-wrapper-39">
                         <label>
                           <input type="checkbox" id={`checkbox-${index}`} checked={item.isChecked} onChange={() => handleOnChange(index)}/>
                           <span className="checkbox" htmlFor={`checkbox-${index}`}></span>
                         </label>
-                      </div>
+                      </div> */}
+                      <input type="checkbox" id={`checkbox-${index}`} checked={item.isChecked} onChange={() => handleOnChange(index)}/>
                       <label
                         htmlFor={`checkbox-${index}`}
                         className="text-gray-100"
