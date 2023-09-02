@@ -8,29 +8,30 @@ function App() {
   const [taskInput, setTaskInput] = useState("");
   const [checkedStateValue, setCheckedStateValue] = useState(0);
 
-  const [checkedState, setCheckedState] = useState(
-    new Array(tasks.length).fill(false)
-  );
+  const [checkedState, setCheckedState] = useState();
 
   const handleOnChange = (position) => {
-    const updatedCheckedState = checkedState.map((item, index) =>
-      index === position ? !item : item
-    );
-
-    setCheckedState(updatedCheckedState);
-
-    const total = updatedCheckedState.reduce((sum, currentState) => {
-      if (currentState === true) {
-        return sum + 1;
+    setTasks("")
+    tasks.map((item, index) => {
+      if(index === position){
+        setTasks(prevTask => [...prevTask, {title: item.title, isChecked: !item.isChecked}])
+      } else {
+        setTasks(prevTask => [...prevTask, {title: item.title, isChecked: item.isChecked}])
       }
-      return sum;
-    }, 0);
+    })
 
-    setCheckedStateValue(total);
+    // const total = tasks.reduce((sum, item) => {
+    //   if (item.isChecked === true) {
+    //     return sum + 1;
+    //   }
+    //   return sum;
+    // }, 0);
+
+    // setCheckedStateValue(total);
   };
 
   function addTask(){
-    setTasks(prevTask => [...prevTask, taskInput])
+    setTasks(prevTask => [...prevTask, {title: taskInput, isChecked: false}])
   }
 
   function deleteTask(position){
@@ -40,8 +41,8 @@ function App() {
   }
 
   useEffect(()=>{
-    
-  },[])
+    // console.log(tasks)
+  },[tasks])
 
   return (
     <div className="h-screen">
@@ -87,7 +88,7 @@ function App() {
                     <div className="flex gap-4 items-center">
                       <div className="checkbox-wrapper-39">
                         <label>
-                          <input type="checkbox" id={`checkbox-${index}`} checked={checkedState[index]} onChange={() => handleOnChange(index)}/>
+                          <input type="checkbox" id={`checkbox-${index}`} checked={item.isChecked} onChange={() => handleOnChange(index)}/>
                           <span className="checkbox" htmlFor={`checkbox-${index}`}></span>
                         </label>
                       </div>
@@ -95,7 +96,7 @@ function App() {
                         htmlFor={`checkbox-${index}`}
                         className="text-gray-100"
                       >
-                        {item}
+                        {item.title}
                       </label>
                     </div>
 
