@@ -10,39 +10,48 @@ function App() {
 
   const [checkedState, setCheckedState] = useState();
 
-  const handleOnChange = (position) => {
-    setTasks("")
-    tasks.map((item, index) => {
-      if(index === position){
-        setTasks(prevTask => [...prevTask, {title: item.title, isChecked: !item.isChecked}])
-      } else {
-        setTasks(prevTask => [...prevTask, {title: item.title, isChecked: item.isChecked}])
-      }
-    })
+  useEffect(() => {
+    
+  }, [tasks]);
 
-    // const total = tasks.reduce((sum, item) => {
-    //   if (item.isChecked === true) {
-    //     return sum + 1;
-    //   }
-    //   return sum;
-    // }, 0);
-
-    // setCheckedStateValue(total);
+  const saveToCache = () => {
+    localStorage.setItem('myData', JSON.stringify(tasks));
   };
 
-  function addTask(){
-    setTasks(prevTask => [...prevTask, {title: taskInput, isChecked: false}])
+  const handleOnChange = (position) => {
+    setTasks("");
+    tasks.map((item, index) => {
+      if (index === position) {
+        setTasks((prevTask) => [
+          ...prevTask,
+          { title: item.title, isChecked: !item.isChecked },
+        ]);
+      } else {
+        setTasks((prevTask) => [
+          ...prevTask,
+          { title: item.title, isChecked: item.isChecked },
+        ]);
+      }
+    });
+
+    saveToCache();
+  };
+
+  function addTask() {
+    setTasks((prevTask) => [
+      ...prevTask,
+      { title: taskInput, isChecked: false },
+    ]);
+
+    saveToCache()
   }
 
-  function deleteTask(position){
-    const taskUpdate = tasks.filter((item, index) => index != position)
+  function deleteTask(position) {
+    const taskUpdate = tasks.filter((item, index) => index != position);
 
-    setTasks(taskUpdate)
+    setTasks(taskUpdate);
+    saveToCache()
   }
-
-  useEffect(()=>{
-    // console.log(tasks)
-  },[tasks])
 
   return (
     <div className="h-screen">
@@ -56,7 +65,10 @@ function App() {
             setTaskInput(e.target?.value);
           }}
         />
-        <button onClick={() => addTask()} className="text-gray-100 font-bold text-sm flex gap-2 justify-center items-center bg-blue-900 rounded-lg w-24 hover:bg-blue-500">
+        <button
+          onClick={() => addTask()}
+          className="text-gray-100 font-bold text-sm flex gap-2 justify-center items-center bg-blue-900 rounded-lg w-24 hover:bg-blue-500"
+        >
           Criar
           <PlusCircle size={16} />
         </button>
@@ -92,7 +104,12 @@ function App() {
                           <span className="checkbox" htmlFor={`checkbox-${index}`}></span>
                         </label>
                       </div> */}
-                      <input type="checkbox" id={`checkbox-${index}`} checked={item.isChecked} onChange={() => handleOnChange(index)}/>
+                      <input
+                        type="checkbox"
+                        id={`checkbox-${index}`}
+                        checked={item.isChecked}
+                        onChange={() => handleOnChange(index)}
+                      />
                       <label
                         htmlFor={`checkbox-${index}`}
                         className="text-gray-100"
