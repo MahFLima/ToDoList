@@ -4,21 +4,30 @@ import { useEffect, useState } from "react";
 import { PlusCircle, Trash } from "@phosphor-icons/react";
 
 function App() {
-  const [tasks, setTasks] = useState("");
+  const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState("");
   const [checkedStateValue, setCheckedStateValue] = useState(0);
 
-  const [checkedState, setCheckedState] = useState();
+  useEffect(()=>{
+    teste()
+  },[])
 
-  useEffect(() => {
+  async function teste(){
     
-  }, [tasks]);
+    if(await localStorage.getItem('myData')){
+      var local = await localStorage.getItem('myData')
+      if(local.length > 0){
+        setTasks(JSON.parse(local))
+      }
+    }
+  }
 
-  const saveToCache = () => {
-    localStorage.setItem('myData', JSON.stringify(tasks));
+  const saveToCache = async () => {
+    await localStorage.setItem('myData', JSON.stringify(tasks));
   };
 
   const handleOnChange = (position) => {
+    console.log(">>>", tasks)
     setTasks("");
     tasks.map((item, index) => {
       if (index === position) {
@@ -38,19 +47,22 @@ function App() {
   };
 
   function addTask() {
+    
     setTasks((prevTask) => [
       ...prevTask,
       { title: taskInput, isChecked: false },
     ]);
-
-    saveToCache()
+    
+    saveToCache();
+    console.log(">>>", tasks)
   }
 
   function deleteTask(position) {
     const taskUpdate = tasks.filter((item, index) => index != position);
 
     setTasks(taskUpdate);
-    saveToCache()
+    saveToCache();
+    localStorage.removeItem(0);
   }
 
   return (
