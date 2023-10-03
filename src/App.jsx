@@ -8,9 +8,12 @@ function App() {
   const [taskInput, setTaskInput] = useState("");
   const [checkedStateValue, setCheckedStateValue] = useState(0);
 
-  useEffect(()=>{
-    teste()
-  },[])
+  useEffect(() => {
+    const localData = localStorage.getItem('myData');
+    if (localData) {
+      setTasks(JSON.parse(localData));
+    }
+  }, []);
 
   async function teste(){
     
@@ -22,47 +25,36 @@ function App() {
     }
   }
 
-  const saveToCache = async () => {
-    await localStorage.setItem('myData', JSON.stringify(tasks));
+  const saveToCache = (updatedTasks) => {
+    localStorage.setItem('myData', JSON.stringify(updatedTasks));
   };
 
   const handleOnChange = (position) => {
-    console.log(">>>", tasks)
-    setTasks("");
-    tasks.map((item, index) => {
+    const updatedTasks = tasks.map((item, index) => {
       if (index === position) {
-        setTasks((prevTask) => [
-          ...prevTask,
-          { title: item.title, isChecked: !item.isChecked },
-        ]);
+        return { ...item, isChecked: !item.isChecked };
       } else {
-        setTasks((prevTask) => [
-          ...prevTask,
-          { title: item.title, isChecked: item.isChecked },
-        ]);
+        return item;
       }
     });
 
-    saveToCache();
+    setTasks(updatedTasks);
+    saveToCache(updatedTasks);
   };
 
   function addTask() {
-    
-    setTasks((prevTask) => [
-      ...prevTask,
-      { title: taskInput, isChecked: false },
-    ]);
-    
-    saveToCache();
-    console.log(">>>", tasks)
+    const newTask = { title: taskInput, isChecked: false };
+    const updatedTasks = [...tasks, newTask];
+    setTasks(updatedTasks);
+    //setTaskInput(""); // Limpa o campo de entrada
+    saveToCache(updatedTasks); // Passe a matriz atualizada para a função de salvamento
   }
+  
 
   function deleteTask(position) {
-    const taskUpdate = tasks.filter((item, index) => index != position);
-
-    setTasks(taskUpdate);
-    saveToCache();
-    localStorage.removeItem(0);
+    const updatedTasks = tasks.filter((item, index) => index !== position);
+    setTasks(updatedTasks);
+    saveToCache(updatedTasks); // Passe a matriz atualizada para a função de salvamento
   }
 
   return (
