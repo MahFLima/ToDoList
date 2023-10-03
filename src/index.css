@@ -47,4 +47,8 @@ body {
   transform: rotate(45deg);
 }
 
+.form-group input:checked ~ label{
+  text-decoration: line-through;
+}
+
 

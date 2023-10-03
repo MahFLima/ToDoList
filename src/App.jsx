@@ -11,19 +11,12 @@ function App() {
   useEffect(() => {
     const localData = localStorage.getItem('myData');
     if (localData) {
-      setTasks(JSON.parse(localData));
+      const data = JSON.parse(localData)
+      const result = data.filter(item => item.isChecked)
+      setTasks(data);
+      setCheckedStateValue(result.length)
     }
   }, []);
-
-  async function teste(){
-    
-    if(await localStorage.getItem('myData')){
-      var local = await localStorage.getItem('myData')
-      if(local.length > 0){
-        setTasks(JSON.parse(local))
-      }
-    }
-  }
 
   const saveToCache = (updatedTasks) => {
     localStorage.setItem('myData', JSON.stringify(updatedTasks));
@@ -38,9 +31,11 @@ function App() {
       }
     });
 
+    const result = updatedTasks.filter(item => item.isChecked)
+
+    setCheckedStateValue(result.length);
     setTasks(updatedTasks);
     saveToCache(updatedTasks);
-    count()
   };
 
   function addTask() {
@@ -61,7 +56,8 @@ function App() {
   return (
     <div className="h-screen">
       <HeaderLogo />
-      <div className="w-screen lg:w-[50%] flex gap-2 absolute top-[17%] lg:left-[25%] px-4 lg:p-0">
+      <div className="overflow-hidden">
+        <div className="w-screen lg:w-[50%] flex gap-2 absolute top-[17%] lg:left-[25%] px-4 lg:p-0">
         <input
           type="text"
           placeholder="Adicione uma nova tarefa"
@@ -77,8 +73,8 @@ function App() {
           Criar
           <PlusCircle size={16} />
         </button>
-      </div>
-      <div className="w-screen text-gray-200 flex flex-col items-center mt-20 px-2">
+        </div>
+        <div className="w-screen text-gray-200 flex flex-col items-center mt-20 px-2">
         <div className="w-full lg:w-1/2">
           <header className="w-full flex justify-between pb-2 border-b-[0.5px] border-gray-400">
             <div className="flex items-center gap-2 font-bold">
@@ -94,7 +90,7 @@ function App() {
               </p>
             </div>
           </header>
-          <div className="mt-6 w-full flex flex-col gap-2">
+          <div className="mt-6 w-full flex flex-col gap-2 pb-10">
             {tasks ? (
               tasks.map((item, index) => {
                 return (
@@ -117,14 +113,14 @@ function App() {
                       />
                       <label
                         htmlFor={`checkbox-${index}`}
-                        className="text-gray-100"
+                        className="text-gray-200 text-base"
                       >
                         {item.title}
                       </label>
                     </div>
 
                     <button onClick={() => deleteTask(index)}>
-                      <Trash size={20} className="text-gray-300" />
+                      <Trash size={20} className="text-gray-300 hover:text-gray-100" />
                     </button>
                   </div>
                 );
@@ -133,6 +129,7 @@ function App() {
               <ContentDefault />
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>
